@@ -19,4 +19,4 @@ There are two threads that are created then launched in a loop that prints value
 
 ## Notes
 
-* A simple program. Not much to say here.
+* A simple program. Not much to say here. The output should begin with `Launching threads` followed by the name each thread and the numbers 0-4. Lastly, you'll see `Threads complete!`
