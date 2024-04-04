@@ -6,12 +6,8 @@
 
 void *print_nums(void *arg) {
 
-  (void) arg;
-
-  int num_thread = *((int*) arg);
-
   for (int i = 0; i < PRINTED_NUMS; i++) {
-    printf("Thread %i: %i\n", num_thread, i);
+    printf("%s: %i\n", (char*) arg, i);
   }
   
   pthread_exit(NULL);
@@ -23,14 +19,12 @@ void *print_nums(void *arg) {
 int main(void) {
 
   pthread_t thread[THREADS];
-  int num_thread[THREADS];
+  char *thread1_name = "Thread 1";
+  char *thread2_name = "Thread 2";
 
   printf("Launching threads\n");
-
-  for (int i = 0; i < THREADS; i++) {
-    num_thread[i] = i;
-    pthread_create(&thread[i], NULL, print_nums, (void*) &num_thread[i]);
-  }
+  pthread_create(&thread[0], NULL, print_nums, thread1_name);
+  pthread_create(&thread[1], NULL, print_nums, thread2_name);
 
   for (int i = 0; i < THREADS; i++) {
     pthread_join(thread[i], NULL);
