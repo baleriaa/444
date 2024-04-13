@@ -6,22 +6,16 @@
 // These will be initialized in main() from the command line.
 int seat_count;
 int broker_count;
-int *seat_taken;  // Array of seats
 int transaction_count;
-
+int *seat_taken;  // Array of seats
 int seat_taken_count = 0;
+
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 int reserve_seat(int n)
 {
-    // Attempt to reserve seat number n
-    //
-    // If the seat is already taken, return -1
-    // Otherwise mark the seat as taken and return 0
-    //
-    // This function should also increment seat_taken_count if the seat
-    // wasn't already taken.
-    
-    // TODO
+    pthread_mutex_lock(&lock);
+
 
     return 0;  // Change as necessary--included so it will build
 }
@@ -42,11 +36,7 @@ int free_seat(int n)
 }
 
 int is_free(int n) {
-    // Returns true if the given seat is available.
-
-    // TODO
-
-    return 0;  // Change as necessary--included so it will build
+    return seat_taken[n];
 }
 
 int verify_seat_count(void) {
@@ -73,10 +63,11 @@ int verify_seat_count(void) {
 
 // ------------------- DO NOT MODIFY PAST THIS LINE -------------------
 
+
 void *seat_broker(void *arg)
 {
     int *id = arg;
-
+// Broker reserves or frees seat
     for (int i = 0; i < transaction_count; i++) {
         int seat = rand() % seat_count;
         if (rand() & 1) {
@@ -87,7 +78,7 @@ void *seat_broker(void *arg)
             // sell a random seat
             free_seat(seat);
         }
-
+// checks seat count and prints error message
         if (!verify_seat_count()) {
             printf("Broker %d: the seat count seems to be off! " \
                    "I quit!\n", *id);
@@ -113,23 +104,31 @@ int main(int argc, char *argv[])
     transaction_count = atoi(argv[3]);
 
     // Allocate the seat-taken array
+    // memory allocated for array of size: seat_count
+    // each element of the array is either 0 or 1
     seat_taken = calloc(seat_count, sizeof *seat_taken);
 
     // Allocate thread handle array for all brokers
+    // memory allocated for array of size: broker_count
+    // each element of the array is a pthread_t
     pthread_t *thread = calloc(broker_count, sizeof *thread);
 
     // Allocate thread ID array for all brokers
+    // memory allocated for array of size: broker_count
+    // each element of the array is an id of type int
     int *thread_id = calloc(broker_count, sizeof *thread_id);
 
     srand(time(NULL) + getpid());
     
     // Launch all brokers
+    // for each broker, create a thread and call seat_broker function
     for (int i = 0; i < broker_count; i++) {
         thread_id[i] = i;
         pthread_create(thread + i, NULL, seat_broker, thread_id + i);
     }
 
     // Wait for all brokers to complete
+    // for each broker, wait for the thread to complete
     for (int i = 0; i < broker_count; i++)
         pthread_join(thread[i], NULL);
 }
