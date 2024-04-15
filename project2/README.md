@@ -1,4 +1,4 @@
-# Project 1: Multithreading
+# Project 2: Mutexes
 
 ## Building
 
