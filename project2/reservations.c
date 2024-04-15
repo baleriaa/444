@@ -13,7 +13,7 @@ int seat_taken_count = 0;
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 int is_free(int n) {
-    return seat_taken[n];
+    return !seat_taken[n];
 }
 
 int reserve_seat(int n)
@@ -24,11 +24,11 @@ int reserve_seat(int n)
         seat_taken[n] = 1;
         seat_taken_count++;
         pthread_mutex_unlock(&lock);
+        return 0;
     } else {
+        pthread_mutex_unlock(&lock);
         return -1;
     }
-
-    return 0;
 }
 
 int free_seat(int n)
@@ -38,37 +38,42 @@ int free_seat(int n)
         // Otherwise mark the seat as free and return 0
     //
     // This function should also decrement seat_taken_count if the seat
+    pthread_mutex_lock(&lock);
+
     if (is_free(n)) {
+        pthread_mutex_unlock(&lock);
         return -1;
     } else {
         seat_taken[n] = 0;
         seat_taken_count--;
+        pthread_mutex_unlock(&lock);
         return 0;
     }
-
-    return 0;  // Change as necessary--included so it will build
 }
 
 int verify_seat_count(void) {
     // This function counts all the taken seats in the seat_taken[]
     // array.
     //
+    
     // It then compares the count with the seat_count global variable.
     //
     // It returns true if they are the same, false otherwise
     //
     // You MAY modify this function, but the intended functionality must
     // still work properly.
+    pthread_mutex_lock(&lock);
 
     int count = 0;
-
     // Count all the taken seats
     for (int i = 0; i < seat_count; i++)
         if (seat_taken[i])
             count++;
 
     // Return true if it's the same as seat_taken_count
-    return count == seat_taken_count;
+    int result = count == seat_taken_count;  // counting and  comparison is done while lock is held
+    pthread_mutex_unlock(&lock);
+    return result;
 }
 
 // ------------------- DO NOT MODIFY PAST THIS LINE -------------------
