@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Create the event buffer
 struct eventbuf *event_buffer;
 int events;
 sem_t *items;
@@ -51,7 +50,6 @@ void *consumer(void *arg) {
   return NULL;
 }
 
-// Parse the command line
 int main(int argc, char *argv[]) {
   if (argc != 5) {
     printf("Error, 4 arguments required: producers, consumers, events, and outstanding events.");
