@@ -1,21 +1,34 @@
 .PHONY: all test clean pristine
 
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror
+TEST_FLAGS = -DCTEST_ENABLE
+
 all: testfs
+
+testfs: testfs.o image.o block.o libvvsfs.a
+	$(CC) $(CFLAGS) -o $@ $^ -L. -lvvsfs
 
 libvvsfs.a: testfs.o image.o block.o
 	ar rcs $@ $^
 
-testfs: testfs.o image.o block.o libvvsfs.a
-	gcc -Wall -Wextra -Werror -o $@ testfs.o image.o block.o -L. -lvvsfs
+test: testfs_test
+	./testfs_test
+
+testfs_test: testfs_test.o image_test.o block_test.o libvvsfs_test.a
+	$(CC) $(CFLAGS) $(TEST_FLAGS) -o $@ $^ -L. -lvvsfs_test
 
 %.o: %.c
-	gcc -Wall -Wextra -Werror -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
-test: testfs
-	./testfs
+%_test.o: %.c
+	$(CC) $(CFLAGS) $(TEST_FLAGS) -c $< -o $@
+
+libvvsfs_test.a: testfs_test.o image_test.o block_test.o
+	ar rcs $@ $^
 
 clean:
 	rm -f *.o
 
-pristine: clean
-	rm -f testfs libvvsfs.a
+pristine:
+	rm -f *.o *.a testfs testfs_test
