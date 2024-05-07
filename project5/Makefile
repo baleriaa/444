@@ -1,21 +1,21 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror
-
-.PHONY: all clean
+.PHONY: all test clean pristine
 
 all: testfs
 
-testfs: testfs.o image.o block.o
-	$(CC) $(CFLAGS) -o $@ $^
+libvvsfs.a: testfs.o image.o block.o
+	ar rcs $@ $^
 
-testfs.o: testfs.c image.h block.h
-	$(CC) $(CFLAGS) -c $< -o $@
+testfs: testfs.o image.o block.o libvvsfs.a
+	gcc -Wall -Wextra -Werror -o $@ testfs.o image.o block.o -L. -lvvsfs
 
-image.o: image.c image.h
-	$(CC) $(CFLAGS) -c $< -o $@
+%.o: %.c
+	gcc -Wall -Wextra -Werror -c $< -o $@
 
-block.o: block.c block.h
-	$(CC) $(CFLAGS) -c $< -o $@
+test: testfs
+	./testfs
 
 clean:
-	rm -f *.o testfs
+	rm -f *.o
+
+pristine: clean
+	rm -f testfs libvvsfs.a
