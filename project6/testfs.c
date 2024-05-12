@@ -34,14 +34,18 @@ void test_bread_and_bwrite(void) {
 }
 
 void test_set_and_free_find_free(void) {
-  // TODO
-  // 
+  unsigned char block[50] = {0};  
+
+  set_free(block, 5, 1); 
+  assert(find_free(block) == 0);
+
+  set_free(block, 0, 1);
+  assert(find_free(block) == 1);
 }
 
-void test_ialloc_and_alloc(void) {
-  // TODO
-  // 
-}
+// void test_ialloc_and_alloc(void) {
+//   // TODO 
+// }
 
 int main(void) {
   CTEST_VERBOSE(1);
@@ -49,7 +53,7 @@ int main(void) {
   test_image_open_and_close();
   test_bread_and_bwrite();
   test_set_and_free_find_free();
-  test_ialloc_and_alloc();
+  // test_ialloc_and_alloc();
 
   CTEST_RESULTS();
   
