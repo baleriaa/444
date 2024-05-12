@@ -33,11 +33,23 @@ void test_bread_and_bwrite(void) {
   CTEST_ASSERT(memcmp(write_block, read_block, BLOCK_SIZE) == 0, "testing equivalence of read and write blocks");
 }
 
+void test_set_and_free_find_free(void) {
+  // TODO
+  // 
+}
+
+void test_ialloc_and_alloc(void) {
+  // TODO
+  // 
+}
+
 int main(void) {
   CTEST_VERBOSE(1);
 
   test_image_open_and_close();
   test_bread_and_bwrite();
+  test_set_and_free_find_free();
+  test_ialloc_and_alloc();
 
   CTEST_RESULTS();
   
