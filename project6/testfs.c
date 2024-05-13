@@ -3,6 +3,9 @@
 #include "block.h"
 #include <stdio.h>
 #include <string.h>
+#include "free.h"
+#include "inode.h"
+
 
 #ifdef CTEST_ENABLE
 
@@ -37,15 +40,26 @@ void test_set_and_free_find_free(void) {
   unsigned char block[50] = {0};  
 
   set_free(block, 5, 1); 
-  assert(find_free(block) == 0);
+  CTEST_ASSERT(find_free(block) == 0, "First free bit shoulf be 0 after setting bit 5");
 
   set_free(block, 0, 1);
-  assert(find_free(block) == 1);
+  CTEST_ASSERT(find_free(block) == 1, "First free bit should be 1 after setting bit 0");
 }
 
-// void test_ialloc_and_alloc(void) {
-//   // TODO 
-// }
+void test_alloc(void) {
+  unsigned char block[BLOCK_SIZE] = {0};
+  bwrite(2, block);
+  int alloc_block = alloc();
+  CTEST_ASSERT(alloc_block != -1, "Ensures that block is allocated");
+}
+
+void test_ialloc(void) {
+  unsigned char block[BLOCK_SIZE] = {0};
+  bwrite(1, block);
+  int alloc_inode = ialloc();
+  CTEST_ASSERT(alloc_inode != -1, "Ensures that inode is allocated");
+}
+
 
 int main(void) {
   CTEST_VERBOSE(1);
@@ -53,7 +67,8 @@ int main(void) {
   test_image_open_and_close();
   test_bread_and_bwrite();
   test_set_and_free_find_free();
-  // test_ialloc_and_alloc();
+  test_ialloc();
+  test_alloc();
 
   CTEST_RESULTS();
   
