@@ -1,10 +1,10 @@
-# Project 5: Starting the File System
+# Project 6: Continuing the File System, managing free blocks 
 
 ## Building
 
 Command Line:
 
-* `make` to build. An executable called `testfs` will be produced.
+* `make` to build. An executable called `testfs` will be produced and tests will be run.
 * `make test` to build and run tests.
 * `make clean` to clean up object files.
 
@@ -12,10 +12,14 @@ Command Line:
 
 * `image.c`: Opens or creates and closes files
 * `block.c`: Reads and writes block of data into buffer
+* `free.c`: Finds and sets free bits
+* `testfs.c`: Tests for all functions
+* `inode.c`: Allocates previosuly free inodes
+* `Makefile`: Builds the project and runs tests
 
 ## Data
 
-* `image_fd` file deascriptor for the image file
+* `image_fd` file descriptor for the image file
 * `BLOCK_SIZE` size of block in bytes
 
 ## Functions
