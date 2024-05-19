@@ -60,6 +60,26 @@ void test_ialloc(void) {
   CTEST_ASSERT(alloc_inode != -1, "Ensures that inode is allocated");
 }
 
+void test_incore_find_free(void) {
+  struct inode *inode = incore_find_free();
+  CTEST_ASSERT(inode != NULL, "Ensures that incore_find_free returns a free inode");
+}
+
+void test_incore_find(void) {
+  struct inode *inode = incore_find_free();
+  inode->ref_count = 1;
+  inode->inode_num = 1;
+  struct inode *found_inode = incore_find(1);
+  CTEST_ASSERT(found_inode != NULL, "Ensures that incore_find returns an inode");
+}
+
+void test_incore_free_all(void) {
+  struct inode *inode = incore_find_free();
+  inode->ref_count = 1;
+  incore_free_all();
+  CTEST_ASSERT(inode->ref_count == 0, "Ensures that incore_free_all sets ref_count to 0");
+}
+
 
 int main(void) {
   CTEST_VERBOSE(1);
@@ -69,6 +89,9 @@ int main(void) {
   test_set_and_free_find_free();
   test_ialloc();
   test_alloc();
+  test_incore_find_free();
+  test_incore_find();
+  test_incore_free_all();
 
   CTEST_RESULTS();
   
