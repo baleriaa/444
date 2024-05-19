@@ -8,6 +8,8 @@ all: testfs
 
 testfs: testfs.o image.o block.o inode.o free.o
 	$(CC) $(CFLAGS) $(TEST_FLAGS) -o $@ $^
+
+test: testfs
 	./testfs
 
 %.o: %.c
