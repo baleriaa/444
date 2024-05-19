@@ -1,6 +1,9 @@
 #include "inode.h"
 #include "block.h"
 #include "free.h"
+#include <stdio.h>
+
+static struct inode incore[MAX_SYS_OPEN_FILES] = {0};
 
 int ialloc(void) {
   unsigned char block[BLOCK_SIZE];
@@ -17,4 +20,18 @@ int ialloc(void) {
 
   return free_inode;
 }
+
+struct inode *incore_find_free(void) {
+  for (int i = 0; i < MAX_SYS_OPEN_FILES; i++) {
+    if (incore[i].ref_count == 0) {
+      return &incore[i];
+    }
+  } 
+  return NULL;
+}
+
+
+struct inode *incore_find(unsigned int inode_num) {return 0;}
+
+void incore_free_all(void) {return 0;}
 
