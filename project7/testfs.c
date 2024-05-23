@@ -80,6 +80,42 @@ void test_incore_free_all(void) {
   CTEST_ASSERT(inode->ref_count == 0, "Ensures that incore_free_all sets ref_count to 0");
 }
 
+void test_read_and_write_inode(void) {
+  struct inode *inode = incore_find_free();
+  inode->size = 10;
+  inode->owner_id = 1;
+  inode->permissions = 1;
+  inode->flags = 1;
+  inode->link_count = 1;
+  inode->block_ptr[0] = 1;
+  inode->ref_count = 1;
+  inode->inode_num = 1;
+
+  write_inode(inode);
+
+  struct inode *read_inode = incore_find(1);
+  CTEST_ASSERT(read_inode->size == 10, "Ensures that size is written and read correctly");
+  CTEST_ASSERT(read_inode->owner_id == 1, "Ensures that owner_id is written and read correctly");
+  CTEST_ASSERT(read_inode->permissions == 1, "Ensures that permissions is written and read correctly");
+  CTEST_ASSERT(read_inode->flags == 1, "Ensures that flags is written and read correctly");
+  CTEST_ASSERT(read_inode->link_count == 1, "Ensures that link_count is written and read correctly");
+  CTEST_ASSERT(read_inode->block_ptr[0] == 1, "Ensures that block_ptr is written and read correctly");
+  CTEST_ASSERT(read_inode->ref_count == 1, "Ensures that ref_count is written and read correctly");
+  CTEST_ASSERT(read_inode->inode_num == 1, "Ensures that inode_num is written and read correctly");
+}
+
+void test_iget(void) {
+  struct inode *inode = iget(1);
+  CTEST_ASSERT(inode != NULL, "Ensures that iget returns an inode.");
+  CTEST_ASSERT(inode->inode_num == 1, "Ensures that iget returns the correct inode.");
+  CTEST_ASSERT(inode->ref_count == 1, "Ensures that iget sets ref_count to 1.");
+}
+
+void test_iput(void) {
+  struct inode *inode = iget(1);
+  iput(inode);
+  CTEST_ASSERT(inode->ref_count == 0, "Ensures that iput sets ref_count to 0 when decremented.");
+}
 
 int main(void) {
   CTEST_VERBOSE(1);
@@ -92,6 +128,9 @@ int main(void) {
   test_incore_find_free();
   test_incore_find();
   test_incore_free_all();
+  test_read_and_write_inode();
+  test_iget();
+  test_iput();
 
   CTEST_RESULTS();
   
