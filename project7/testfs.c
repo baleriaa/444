@@ -54,10 +54,20 @@ void test_alloc(void) {
 }
 
 void test_ialloc(void) {
+  incore_free_all();
   unsigned char block[BLOCK_SIZE] = {0};
+
   bwrite(1, block);
-  int alloc_inode = ialloc();
-  CTEST_ASSERT(alloc_inode != -1, "Ensures that inode is allocated");
+  printf("test_ialloc: Calling ialloc()\n");
+
+  struct inode *in = ialloc();
+  printf("test_ialloc: ialloc() returned %p\n", (void *)in);
+
+  CTEST_ASSERT(in != NULL, "Ensures that inode is allocated");
+  CTEST_ASSERT(in->size == 0, "Ensures that size is set to 0");
+  CTEST_ASSERT(in->owner_id == 0, "Ensures that owner_id is set to 0");
+  CTEST_ASSERT(in->permissions == 0, "Ensures that permissions is set to 0");
+  CTEST_ASSERT(in->flags == 0, "Ensures that flags is set to 0");
 }
 
 void test_incore_find_free(void) {
