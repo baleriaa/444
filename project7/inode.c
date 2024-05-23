@@ -6,20 +6,33 @@
 
 static struct inode incore[MAX_SYS_OPEN_FILES] = {0};
 
-int ialloc(void) {
+struct inode *ialloc(void) {
   unsigned char block[BLOCK_SIZE];
-  
   bread(1, block);
   int free_inode = find_free(block);
 
   if (free_inode == -1) {
-    return -1;
+    return NULL;
+  }
+  struct inode *in = iget(free_inode);
+  if (in == NULL) {
+    return NULL;
   }
 
   set_free(block, free_inode, 1);
   bwrite(1, block);
+  in->size = 0;
+  in->owner_id = 0;
+  in->permissions = 0;
+  in->flags = 0;
+  for (int i = 0; i < INODE_PTR_COUNT; i++) {
+    in->block_ptr[i] = 0;
+  }
 
-  return free_inode;
+  in->inode_num = free_inode;
+  write_inode(in);
+  
+  return in;
 }
 
 struct inode *incore_find_free(void) {
