@@ -2,6 +2,11 @@
 #define INODE_H
 #define INODE_PTR_COUNT 16
 #define MAX_SYS_OPEN_FILES 64
+#define BLOCK_SIZE 4096
+#define INODE_SIZE 64
+#define INODE_FIRST_BLOCK 3
+#define INODES_PER_BLOCK (BLOCK_SIZE / INODE_SIZE)
+
 
 int ialloc(void);
 int alloc(void);
@@ -10,6 +15,8 @@ struct inode *incore_find(unsigned int inode_num);
 void incore_free_all(void);
 void read_inode(struct inode *in, int inode_num);
 void write_inode(struct inode *in);
+struct inode *iget(int inode_num);
+void iput(struct inode *in);
 
 struct inode {
     unsigned int size;
