@@ -6,7 +6,7 @@ TEST_FLAGS = -DCTEST_ENABLE
 
 all: testfs
 
-testfs: testfs.o image.o block.o inode.o free.o
+testfs: testfs.o image.o block.o inode.o free.o pack.o
 	$(CC) $(CFLAGS) $(TEST_FLAGS) -o $@ $^
 
 test: testfs
