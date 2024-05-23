@@ -105,6 +105,7 @@ void test_read_and_write_inode(void) {
 }
 
 void test_iget(void) {
+  incore_free_all();
   struct inode *inode = iget(1);
   CTEST_ASSERT(inode != NULL, "Ensures that iget returns an inode.");
   CTEST_ASSERT(inode->inode_num == 1, "Ensures that iget returns the correct inode.");
@@ -112,6 +113,7 @@ void test_iget(void) {
 }
 
 void test_iput(void) {
+  incore_free_all();
   struct inode *inode = iget(1);
   iput(inode);
   CTEST_ASSERT(inode->ref_count == 0, "Ensures that iput sets ref_count to 0 when decremented.");
