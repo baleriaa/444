@@ -17,6 +17,8 @@ Command Line:
 * `inode.c`: Allocates previosuly free inodes
 * `Makefile`: Builds the project and runs tests
 * `pack.c`: Helper functions for reading and writing multi-byte values
+* `mkfs.c`: Creates root directory and initializes fs
+* `dir.c`: Directory functions for opening, closing, and getting directories
 
 ## Data
 
@@ -37,6 +39,10 @@ Command Line:
 * `write_inode` writes an inode from memory to disk
 * `iget` retrieves an in-core inode for a given inode number, or loads it from disk if not already in-core
 * `iput` decrements the reference count of an in-core inode and writes it to disk if the count reaches zero
+* `mkfs` Creates root directory and initializes fs
+* `directory_open` Opens a directory and retuens pointer to a directory structure
+* `directory_close` Closes a directory
+* `directory_get` Reads the next directory entry from a directory
 
 ## Notes
 
