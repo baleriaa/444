@@ -8,11 +8,9 @@
 void mkfs(void) {
   unsigned char inode_bitmap[BLOCK_SIZE] = {0};
   bwrite(1, inode_bitmap);
+
   struct inode *root_inode = ialloc();
-  if (root_inode == NULL) {
-        perror("mkfs: ialloc failed");
-        return;
-    }
+
   unsigned int root_inode_num = root_inode->inode_num;
 
   int root_block = alloc();
