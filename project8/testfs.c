@@ -7,6 +7,7 @@
 #include "inode.h"
 #include "mkfs.h"
 #include "pack.h"
+#include "dir.h"
 
 
 #ifdef CTEST_ENABLE
@@ -157,6 +158,42 @@ void test_mkfs(void) {
   iput(root);
 }
 
+void test_directory_open(void) {
+  mkfs();
+  struct directory *dir = directory_open(0);
+
+  CTEST_ASSERT(dir != NULL, "Directory should be open.");
+  CTEST_ASSERT(dir->inode->inode_num == 0, "Directory inode number should be 0.");
+  CTEST_ASSERT(dir->offset == 0, "Directory offset should be 0.");
+
+  directory_close(dir);
+}
+
+// void test_directory_get(void) {
+//   mkfs();
+//   struct directory *dir = directory_open(0);
+//   struct directory_entry ent;
+
+//   CTEST_ASSERT(directory_get(dir, &ent) == 0, "First entry should be '.'.");
+//   CTEST_ASSERT(ent.inode_num == 0, "Inode number of '.' should be 0.");
+//   CTEST_ASSERT(strcmp(ent.name, ".") == 0, "Name of first entry should be '.'.");
+
+//   CTEST_ASSERT(directory_get(dir, &ent) == 0, "Second entry should be '..'.");
+//   CTEST_ASSERT(ent.inode_num == 0, "Inode number of '..' should be 0.");
+//   CTEST_ASSERT(strcmp(ent.name, "..") == 0, "Name of second entry should be '..'.");
+
+//   directory_close(dir);
+// }
+
+void test_directory_close(void) {
+  mkfs();
+  struct directory *dir = directory_open(0);
+  directory_close(dir);
+
+  CTEST_ASSERT(dir->inode == NULL, "Directory inode should be NULL.");
+  CTEST_ASSERT(dir->offset == 0, "Directory offset should be 0.");
+}
+
 int main(void) {
   CTEST_VERBOSE(1);
 
@@ -172,6 +209,8 @@ int main(void) {
   test_iget();
   test_iput();
   test_mkfs();
+  test_directory_open();
+  test_directory_close();
 
   CTEST_RESULTS();
   
