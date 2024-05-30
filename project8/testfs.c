@@ -169,21 +169,21 @@ void test_directory_open(void) {
   directory_close(dir);
 }
 
-// void test_directory_get(void) {
-//   mkfs();
-//   struct directory *dir = directory_open(0);
-//   struct directory_entry ent;
+void test_directory_get(void) {
+  mkfs();
+  struct directory *dir = directory_open(0);
+  struct directory_entry ent;
 
-//   CTEST_ASSERT(directory_get(dir, &ent) == 0, "First entry should be '.'.");
-//   CTEST_ASSERT(ent.inode_num == 0, "Inode number of '.' should be 0.");
-//   CTEST_ASSERT(strcmp(ent.name, ".") == 0, "Name of first entry should be '.'.");
+  CTEST_ASSERT(directory_get(dir, &ent) == 0, "First entry should be '.'.");
+  CTEST_ASSERT(ent.inode_num == 0, "Inode number of '.' should be 0.");
+  CTEST_ASSERT(strcmp(ent.name, ".") == 0, "Name of first entry should be '.'.");
 
-//   CTEST_ASSERT(directory_get(dir, &ent) == 0, "Second entry should be '..'.");
-//   CTEST_ASSERT(ent.inode_num == 0, "Inode number of '..' should be 0.");
-//   CTEST_ASSERT(strcmp(ent.name, "..") == 0, "Name of second entry should be '..'.");
+  CTEST_ASSERT(directory_get(dir, &ent) == 0, "Second entry should be '..'.");
+  CTEST_ASSERT(ent.inode_num == 0, "Inode number of '..' should be 0.");
+  CTEST_ASSERT(strcmp(ent.name, "..") == 0, "Name of second entry should be '..'.");
 
-//   directory_close(dir);
-// }
+  directory_close(dir);
+}
 
 void test_directory_close(void) {
   mkfs();
@@ -211,6 +211,7 @@ int main(void) {
   test_mkfs();
   test_directory_open();
   test_directory_close();
+  test_directory_get();
 
   CTEST_RESULTS();
   
