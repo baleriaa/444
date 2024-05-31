@@ -8,7 +8,7 @@
 #include "mkfs.h"
 #include "pack.h"
 #include "dir.h"
-
+#include "namei.h"
 
 #ifdef CTEST_ENABLE
 
@@ -194,6 +194,16 @@ void test_directory_close(void) {
   CTEST_ASSERT(dir->offset == 0, "Directory offset should be 0.");
 }
 
+void test_namei(void) {
+  mkfs();
+  struct inode *root = namei("/");
+  CTEST_ASSERT(root != NULL, "Root inode should be found.");
+  CTEST_ASSERT(root->inode_num == 0, "Root inode number should be 0.");
+
+  struct inode *not_found = namei("/notfound");
+  CTEST_ASSERT(not_found == NULL, "Non-existent inode should not be found.");
+}
+
 int main(void) {
   CTEST_VERBOSE(1);
 
@@ -212,6 +222,7 @@ int main(void) {
   test_directory_open();
   test_directory_close();
   test_directory_get();
+  test_namei();
 
   CTEST_RESULTS();
   
