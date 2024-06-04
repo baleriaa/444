@@ -43,6 +43,7 @@ Command Line:
 * `directory_open` Opens a directory and retuens pointer to a directory structure
 * `directory_close` Closes a directory
 * `directory_get` Reads the next directory entry from a directory
-
+* `directory_make` This function will create a directory.
+* `namei` This function maps a path string like /foo/bar to the inode of the last item on the path.
 ## Notes
 
