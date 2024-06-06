@@ -61,10 +61,8 @@ void test_ialloc(void) {
   unsigned char block[BLOCK_SIZE] = {0};
 
   bwrite(1, block);
-  printf("test_ialloc: Calling ialloc()\n");
 
   struct inode *in = ialloc();
-  printf("test_ialloc: ialloc() returned %p\n", (void *)in);
 
   CTEST_ASSERT(in != NULL, "Ensures that inode is allocated");
   CTEST_ASSERT(in->size == 0, "Ensures that size is set to 0");
@@ -200,8 +198,36 @@ void test_namei(void) {
   CTEST_ASSERT(root != NULL, "Root inode should be found.");
   CTEST_ASSERT(root->inode_num == 0, "Root inode number should be 0.");
 
-  struct inode *not_found = namei("/notfound");
+  struct inode *not_found = namei("/foo");
   CTEST_ASSERT(not_found == NULL, "Non-existent inode should not be found.");
+}
+
+void test_directory_make(void) {
+  mkfs(); 
+
+  int result = directory_make("/foo");
+  CTEST_ASSERT(result == 0, "directory_make(\"/foo\") should succeed.");
+
+  struct inode *foo = namei("/foo");
+  CTEST_ASSERT(foo != NULL, "namei(\"/foo\") should return the inode for the newly created directory.");
+  CTEST_ASSERT(foo->flags == 2, "New directory should have the DIRECTORY flag set.");
+  CTEST_ASSERT(foo->size == 64, "New directory size should be 64 bytes.");
+
+  iput(foo);
+
+  struct directory *dir = directory_open(0);
+  struct directory_entry ent;
+
+  CTEST_ASSERT(strcmp(ent.name, ".") == 0, "First entry should be '.'");
+  CTEST_ASSERT(ent.inode_num == 0, "Inode number of '.' should be 0");
+
+  CTEST_ASSERT(strcmp(ent.name, "..") == 0, "Second entry should be '..'");
+  CTEST_ASSERT(ent.inode_num == 0, "Inode number of '..' should be 0");
+
+  CTEST_ASSERT(strcmp(ent.name, "foo") == 0, "Third entry should be 'foo'");
+  CTEST_ASSERT(ent.inode_num == foo->inode_num, "Inode number of 'foo' should match the new directory inode");
+
+  directory_close(dir);
 }
 
 int main(void) {
