@@ -114,19 +114,33 @@ int directory_make(char *path) {
 
   bwrite(new_data_block, block);
 
-// TODO
-// From the parent directory inode, find the block that will contain the new directory entry (using the size and block_ptr fields).
+  unsigned int parent_size = parent_inode->size;
+  unsigned int parent_index = parent_size / BLOCK_SIZE;
+  unsigned int parent_offset = parent_size % BLOCK_SIZE;
 
-// Read that block into memory unless you're creating a new one (bread()), and add the new directory entry to it.
+  if (parent_size % BLOCK_SIZE == 0) {
+    int new_block = alloc();
+    if (new_block == -1) {
+      return -1;
+    }
+    parent_inode->block_ptr[parent_index] = new_block;
+    memset(block, 0, BLOCK_SIZE);
+  } else {
+    int parent_block = parent_inode->block_ptr[parent_index];
+    bread(parent_block, block);
+  }
 
-// Write that block to disk (bwrite()).
+  write_u16(block + parent_offset, new_inode_num);
+  strncpy((char *)(block + parent_offset + 2), basename, 15);
+  block[parent_offset + 17] = '\0';
 
-// Update the parent directory's size field (which should increase by 32, the size of the new directory entry.
+  int parent_block = parent_inode->block_ptr[parent_index];
+  bwrite(parent_block, block);
 
-// Release the new directory's in-core inode (iput()).
+  parent_inode->size += 32;
 
-// Release the parent directory's in-core inode (iput()).
-// TODO
+  iput(new_inode);
+  iput(parent_inode);
 
   return 0;
 }

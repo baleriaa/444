@@ -226,7 +226,7 @@ void test_directory_make(void) {
 
   CTEST_ASSERT(strcmp(ent.name, "foo") == 0, "Third entry should be 'foo'");
   CTEST_ASSERT(ent.inode_num == foo->inode_num, "Inode number of 'foo' should match the new directory inode");
-
+  CTEST_ASSERT(ent.inode_num == foo->inode_num, "Inode number of 'foo' should match the new directory inode");
   directory_close(dir);
 }
 
